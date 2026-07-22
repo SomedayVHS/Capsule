@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="fr" data-lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capsule Noir — Someday Production</title>
+<link rel="icon" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;1,400;1,500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --noir:#14120f;
+    --bone:#f2ede4;
+    --ash:#8a857c;
+    --brass:#b08d57;
+    --maxw:980px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bone);
+    color:var(--noir);
+    font-family:'Space Mono', monospace;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+
+  .fr-only[data-lang-target="en"], .en-only[data-lang-target="fr"]{display:none;}
+  html[data-lang="en"] .fr-only{display:none;}
+  html[data-lang="en"] .en-only{display:inline;}
+  html[data-lang="fr"] .en-only{display:none;}
+  html[data-lang="fr"] .fr-only{display:inline;}
+
+  /* HEADER */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:clamp(20px,5vw,32px) clamp(16px,4vw,32px);
+  }
+  .brand{
+    font-family:'Fraunces', serif; font-style:italic; font-weight:500;
+    font-size:0.95rem; letter-spacing:0.01em;
+  }
+  .brand em{ color:var(--brass); font-style:italic; }
+  .lang-toggle{
+    border:none; background:none; cursor:pointer; color:var(--ash);
+    font-family:'Space Mono', monospace; font-size:0.68rem; letter-spacing:0.1em;
+    padding:4px 0;
+  }
+  .lang-toggle:hover{ color:var(--noir); }
+
+  /* HERO */
+  .hero{
+    max-width:var(--maxw); margin:0 auto;
+    padding:clamp(60px,14vw,140px) clamp(16px,4vw,32px) clamp(40px,8vw,80px);
+    text-align:center;
+  }
+  .hero .eyebrow{
+    font-size:0.66rem; letter-spacing:0.24em; color:var(--ash); margin-bottom:22px;
+  }
+  .hero h1{
+    font-family:'Fraunces', serif; font-style:italic; font-weight:400;
+    font-size:clamp(2.6rem, 8vw, 5.4rem);
+    line-height:1; margin:0 0 26px;
+  }
+  .hero .year{ color:var(--ash); }
+  .hero p{
+    max-width:520px; margin:0 auto;
+    font-size:0.78rem; line-height:1.85; color:var(--ash);
+  }
+
+  /* DIRECTION — ligne unique, sans cadre */
+  .direction{
+    max-width:var(--maxw); margin:0 auto;
+    padding:0 clamp(16px,4vw,32px) clamp(50px,9vw,90px);
+    display:flex; flex-wrap:wrap; justify-content:center;
+    gap:10px clamp(18px,4vw,36px);
+    font-size:0.68rem; letter-spacing:0.05em; color:var(--ash);
+    text-align:center;
+  }
+  .direction span b{ color:var(--noir); font-weight:700; }
+
+  /* PLATEAU */
+  .sheet-intro{
+    max-width:var(--maxw); margin:0 auto;
+    padding:clamp(28px,6vw,40px) clamp(16px,4vw,32px) clamp(28px,5vw,40px);
+    text-align:center;
+  }
+  .sheet-intro h2{
+    font-family:'Fraunces', serif; font-style:italic; font-weight:400;
+    font-size:clamp(1.15rem,3.4vw,1.4rem); margin:0 0 6px;
+  }
+  .sheet-intro .count{ font-size:0.66rem; color:var(--ash); letter-spacing:0.05em; }
+
+  .board-wrap{
+    max-width:700px; margin:0 auto clamp(40px,8vw,70px);
+    padding:0 clamp(12px,4vw,32px);
+  }
+  .board{
+    display:grid;
+    grid-template-columns:repeat(8, 1fr);
+    grid-template-rows:repeat(8, 1fr);
+    aspect-ratio:1/1;
+  }
+  .square{ position:relative; aspect-ratio:1/1; background:var(--bone); }
+  .square.dark{ background:var(--noir); }
+
+  .square.photo{ cursor:pointer; overflow:hidden; }
+  .square.photo img{
+    width:100%; height:100%; object-fit:cover;
+    filter:grayscale(0.1) contrast(1.03);
+    transition:transform .6s ease;
+    display:block;
+  }
+  .square.photo:hover img{ transform:scale(1.05); }
+  .square.photo::after{
+    content:""; position:absolute; inset:0;
+    background:linear-gradient(to top, rgba(0,0,0,0.4), transparent 55%);
+  }
+  .square.photo .coord{
+    position:absolute; bottom:8%; left:9%;
+    color:var(--brass); z-index:2;
+    font-size:clamp(0.42rem, 1.4vw, 0.62rem); letter-spacing:0.04em;
+  }
+  .square.photo .dot{
+    position:absolute; top:9%; right:9%; z-index:2;
+    width:5px; height:5px; border-radius:50%;
+    background:var(--bone);
+    opacity:0.7;
+  }
+
+  /* feuille de partie */
+  .scoresheet{
+    max-width:520px; margin:0 auto clamp(60px,10vw,100px);
+    padding:0 clamp(16px,4vw,32px);
+  }
+  .scoresheet ol{ list-style:none; margin:0; padding:0; }
+  .scoresheet li{
+    display:flex; gap:16px;
+    font-size:0.72rem; line-height:1.6; color:var(--ash);
+    padding:9px 0;
+  }
+  .scoresheet .coord{ color:var(--brass); font-weight:700; width:26px; flex-shrink:0; }
+  .scoresheet .cap{ color:var(--noir); }
+
+  /* FOOTER */
+  footer{
+    padding:clamp(40px,8vw,70px) clamp(16px,4vw,32px) clamp(30px,6vw,50px);
+    text-align:center;
+  }
+  .footer-links{
+    font-size:0.7rem; letter-spacing:0.04em; color:var(--ash);
+    display:flex; flex-wrap:wrap; justify-content:center; gap:6px 18px;
+    margin-bottom:26px;
+  }
+  .footer-links a{ text-decoration:none; }
+  .footer-links a:hover{ color:var(--noir); }
+  .signature{
+    font-family:'Fraunces', serif; font-style:italic; font-size:0.8rem; color:var(--ash);
+  }
+
+  /* LIGHTBOX */
+  .lightbox{
+    position:fixed; inset:0; z-index:1000;
+    background:rgba(20,18,15,0.97);
+    display:none; align-items:center; justify-content:center;
+    padding:clamp(16px,6vw,40px);
+  }
+  .lightbox.open{ display:flex; }
+  .lightbox img{ max-width:min(92vw,860px); max-height:76vh; object-fit:contain; }
+  .lightbox .lb-caption{
+    position:absolute; bottom:clamp(18px,5vw,34px); left:0; right:0; text-align:center;
+    color:var(--bone); font-size:0.7rem; letter-spacing:0.04em; padding:0 16px;
+  }
+  .lightbox .lb-close{
+    position:absolute; top:clamp(14px,4vw,26px); right:clamp(16px,5vw,30px); color:var(--bone);
+    background:none; border:none; font-size:1.3rem; cursor:pointer; line-height:1;
+  }
+  .lightbox .lb-toggle{
+    position:absolute; top:clamp(14px,4vw,26px); left:clamp(16px,5vw,30px);
+    color:var(--bone); border:none; background:none;
+    font-family:'Space Mono', monospace; font-size:0.62rem; letter-spacing:0.08em;
+    padding:0; cursor:pointer; text-decoration:underline; text-underline-offset:4px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">SOMEDAY <em>PRODUCTION</em></div>
+  <button class="lang-toggle" id="langToggle">EN / FR</button>
+</header>
+
+<section class="hero">
+  <div class="eyebrow fr-only">MODE — STUDIO — INTÉRIEUR</div>
+  <div class="eyebrow en-only">FASHION — STUDIO — INDOOR</div>
+  <h1>Capsule <em>Noir</em> <span class="year">2027</span></h1>
+  <p class="fr-only">Studio blanc, cyclorama pur. Vestiaire noir sophistiqué. Kodak Vision3 50D, cadre 2.39:1, caméra statique.</p>
+  <p class="en-only">Pure white cyclorama. Sophisticated black wardrobe. Kodak Vision3 50D, 2.39:1 frame, static camera.</p>
+</section>
+
+<div class="direction">
+  <span class="fr-only"><b>Pellicule</b> — Vision3 50D</span>
+  <span class="en-only"><b>Film</b> — Vision3 50D</span>
+  <span class="fr-only"><b>Lumière</b> — zénithale, contre-jour</span>
+  <span class="en-only"><b>Light</b> — overhead, backlight</span>
+  <span class="fr-only"><b>Palette</b> — bone / noir / brasse</span>
+  <span class="en-only"><b>Palette</b> — bone / noir / brass</span>
+</div>
+
+<div class="sheet-intro" id="sheet">
+  <h2 class="fr-only">Plateau — huit coups</h2>
+  <h2 class="en-only">Board — eight moves</h2>
+  <div class="count fr-only">une partie en huit plans</div>
+  <div class="count en-only">a game in eight frames</div>
+</div>
+
+<div class="board-wrap">
+  <div class="board" id="board"></div>
+</div>
+
+<div class="scoresheet">
+  <ol id="scoreList"></ol>
+</div>
+
+<footer>
+  <div class="footer-links">
+    <a href="index.html" class="fr-only">Portfolio</a>
+    <a href="index.html" class="en-only">Portfolio</a>
+    <a href="home-sake.html">Home.Sake</a>
+    <a href="afterglow-2028.html">AFTERGLOW 2028</a>
+    <a href="golden-hour.html">Golden Hour</a>
+    <a href="filbert.html">Filbert</a>
+    <a href="le-quai.html">Le Quai</a>
+    <a href="mailto:contact@somedayproduction.com">Contact</a>
+  </div>
+  <div class="signature">analog imperfection is intentional</div>
+</footer>
+
+<div class="lightbox" id="lightbox">
+  <button class="lb-toggle" id="lbToggle" data-mode="full">
+    <span class="fr-only">coulisses</span><span class="en-only">behind the scenes</span>
+  </button>
+  <button class="lb-close" id="lbClose">×</button>
+  <img id="lbImage" src="" alt="">
+  <div class="lb-caption" id="lbCaption"></div>
+</div>
+
+<script>
+  const html = document.documentElement;
+  document.getElementById('langToggle').addEventListener('click', () => {
+    html.setAttribute('data-lang', html.getAttribute('data-lang') === 'fr' ? 'en' : 'fr');
+    renderScoreList();
+  });
+
+  const FILES = ['a','b','c','d','e','f','g','h'];
+  const looks = [
+    { file:1, rank:7, capFr:'Silhouette — robe crêpe, dos nu', capEn:'Silhouette — crêpe gown, bare back', img:'01' },
+    { file:4, rank:6, capFr:'Profil — blazer structuré', capEn:'Profile — structured blazer', img:'02' },
+    { file:6, rank:5, capFr:'Détail — tombé du pantalon', capEn:'Detail — trouser drape', img:'03' },
+    { file:2, rank:4, capFr:'Mouvement — cape en suspension', capEn:'Movement — cape in motion', img:'04' },
+    { file:7, rank:3, capFr:'Intimiste — assise au sol', capEn:'Intimate — seated on the floor', img:'05' },
+    { file:3, rank:2, capFr:'Duo — textures superposées', capEn:'Duo — layered textures', img:'06' },
+    { file:5, rank:8, capFr:'Détail — bijou brasse', capEn:'Detail — brass jewelry', img:'07' },
+    { file:8, rank:1, capFr:'Signature — total look noir', capEn:'Signature — total black look', img:'08' },
+  ];
+
+  function coordOf(file, rank){ return FILES[file-1] + rank; }
+
+  const board = document.getElementById('board');
+  const cells = {};
+
+  for(let rank=8; rank>=1; rank--){
+    for(let file=1; file<=8; file++){
+      const isDark = (file + rank) % 2 === 0;
+      const sq = document.createElement('div');
+      sq.className = 'square ' + (isDark ? 'dark' : 'light');
+      const coord = coordOf(file, rank);
+      board.appendChild(sq);
+      cells[coord] = sq;
+    }
+  }
+
+  looks.forEach(look => {
+    const coord = coordOf(look.file, look.rank);
+    const sq = cells[coord];
+    sq.classList.add('photo');
+    sq.classList.remove('dark','light');
+    sq.dataset.full = `capsule-noir/${look.img}.jpg`;
+    sq.dataset.coulisses = `capsule-noir/${look.img}-making.jpg`;
+    sq.dataset.capFr = look.capFr;
+    sq.dataset.capEn = look.capEn;
+    sq.innerHTML = `
+      <img src="capsule-noir/${look.img}.jpg" alt="${look.capFr}" loading="lazy">
+      <span class="coord">${coord}</span>
+      <span class="dot"></span>
+    `;
+  });
+
+  function renderScoreList(){
+    const lang = html.getAttribute('data-lang');
+    const list = document.getElementById('scoreList');
+    list.innerHTML = looks.map(look => {
+      const coord = coordOf(look.file, look.rank);
+      const cap = lang === 'fr' ? look.capFr : look.capEn;
+      return `<li><span class="coord">${coord}</span><span class="cap">${cap}</span></li>`;
+    }).join('');
+  }
+  renderScoreList();
+
+  const lightbox = document.getElementById('lightbox');
+  const lbImage = document.getElementById('lbImage');
+  const lbCaption = document.getElementById('lbCaption');
+  const lbToggle = document.getElementById('lbToggle');
+  let currentSquare = null;
+
+  document.querySelectorAll('.square.photo').forEach(sq => {
+    sq.addEventListener('click', () => {
+      currentSquare = sq;
+      lbToggle.dataset.mode = 'full';
+      openLightbox(sq);
+    });
+  });
+
+  function openLightbox(sq){
+    lbImage.src = sq.dataset.full;
+    updateCaption(sq);
+    lightbox.classList.add('open');
+  }
+
+  function updateCaption(sq){
+    const lang = html.getAttribute('data-lang');
+    lbCaption.textContent = lang === 'fr' ? sq.dataset.capFr : sq.dataset.capEn;
+  }
+
+  lbToggle.addEventListener('click', () => {
+    if(!currentSquare) return;
+    const isFull = lbToggle.dataset.mode === 'full';
+    lbImage.src = isFull ? currentSquare.dataset.coulisses : currentSquare.dataset.full;
+    lbToggle.dataset.mode = isFull ? 'coulisses' : 'full';
+  });
+
+  document.getElementById('lbClose').addEventListener('click', () => {
+    lightbox.classList.remove('open');
+  });
+  lightbox.addEventListener('click', (e) => {
+    if(e.target === lightbox) lightbox.classList.remove('open');
+  });
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape') lightbox.classList.remove('open');
+  });
+</script>
+
+</body>
+</html>
