@@ -286,12 +286,12 @@
     const sq = cells[coord];
     sq.classList.add('photo');
     sq.classList.remove('dark','light');
-    sq.dataset.full = `capsule-noir/${look.img}.jpg`;
-    sq.dataset.coulisses = `capsule-noir/${look.img}-making.jpg`;
+    sq.dataset.full = `capsule-noir-${look.img}.jpg`;
+    sq.dataset.coulisses = `capsule-noir-${look.img}-making.jpg`;
     sq.dataset.capFr = look.capFr;
     sq.dataset.capEn = look.capEn;
     sq.innerHTML = `
-      <img src="capsule-noir/${look.img}.jpg" alt="${look.capFr}" loading="lazy">
+      <img src="capsule-noir-${look.img}.jpg" alt="${look.capFr}" loading="lazy">
       <span class="coord">${coord}</span>
       <span class="dot"></span>
     `;
